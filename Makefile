@@ -24,7 +24,7 @@ run: ## run App on uvicorn server
 .PHONY: format test
 
 format:
-	pip install -U black &&	black .
+	pip install -U black && black .
 
 test: ## run tests quickly with the default Python
 	pytest -v -s tests

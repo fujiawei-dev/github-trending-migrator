@@ -260,7 +260,7 @@ async def get_github_trending(payload=None, url=GITHUB_TRENDING_URL, repositorie
         raw_html = await get_request(url, compress=True, params=payload)
 
     if not isinstance(raw_html, str):
-        return ConnectionRefusedError(url)
+        return "Can't connect to Github"
 
     return (scraping_repositories if repositories else scraping_developers)(
         make_soup(filter_articles(raw_html)),

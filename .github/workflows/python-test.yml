@@ -34,11 +34,11 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Test with pytest
       run: |
-        pytest tests
+        pytest tests --ignore=tests/test_migrate.py
     - name: Generate coverage report
       if: ${{ !env.ACT }}
       run: |
-        pytest --cov=app --cov-report=xml
+        pytest --cov=github_trending_migrator --cov-report=xml
     - name: Upload coverage to Codecov
       if: ${{ !env.ACT }}
       uses: codecov/codecov-action@v2

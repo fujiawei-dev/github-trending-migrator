@@ -16,8 +16,8 @@ async def migrate_to_gitea(session, clone_addr, repo_name, description):
     log.debug(clone_addr)
 
     await session.post(
-        # url="http://127.0.0.1:13000/api/v1/repos/migrate",
-        url="http://192.168.0.118:13000/api/v1/repos/migrate",
+        url="http://127.0.0.1:13000/api/v1/repos/migrate",
+        # url="http://192.168.0.118:13000/api/v1/repos/migrate",
         auth=aiohttp.BasicAuth("root", "root"),
         json={
             "clone_addr": clone_addr,

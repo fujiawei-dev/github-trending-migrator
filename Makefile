@@ -27,7 +27,7 @@ format:
 	pip install -U black && black .
 
 test: ## run tests quickly with the default Python
-	pytest -v -s tests
+	pytest tests -v -s
 	rm -r .pytest_cache
 
 

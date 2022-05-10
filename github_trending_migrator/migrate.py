@@ -64,7 +64,11 @@ async def migrate_to_gitea_from_github_trending():
         # tasks = []
 
         for repository in repositories:
-            if repository["total_stars"] < 1500 or repository["forks"] < 500:
+            try:
+                if repository["total_stars"] < 1500 or repository["forks"] < 500:
+                    continue
+            except TypeError:
+                log.error(repository)
                 continue
 
             try:

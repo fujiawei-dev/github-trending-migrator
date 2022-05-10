@@ -5,17 +5,18 @@ LastEditors: Rustle Karl
 LastEditTime: 2022.05.09 20:20
 """
 import asyncio
+from itertools import chain
 
 import aiohttp
 
 from .logger import log
-from .scraping import get_github_trending
+from .scraping import GITHUB_TRENDING_URL as base_url, get_github_trending
 
 
 async def migrate_to_gitea(session, clone_addr, repo_name, description):
     log.debug(clone_addr)
 
-    await session.post(
+    response = await session.post(
         url="http://127.0.0.1:13000/api/v1/repos/migrate",
         # url="http://192.168.0.118:13000/api/v1/repos/migrate",
         auth=aiohttp.BasicAuth("root", "root"),
@@ -31,9 +32,34 @@ async def migrate_to_gitea(session, clone_addr, repo_name, description):
         },
     )
 
+    log.debug(f"Response [{response.status}]")
+
 
 async def migrate_to_gitea_from_github_trending():
-    repositories = await get_github_trending()
+    repositories = chain(
+        await get_github_trending({"since": "daily"}),
+        await get_github_trending({"since": "weekly"}),
+        await get_github_trending({"since": "monthly"}),
+        await get_github_trending({"since": "daily"}, base_url + "/go"),
+        await get_github_trending({"since": "weekly"}, base_url + "/go"),
+        await get_github_trending({"since": "monthly"}, base_url + "/go"),
+        await get_github_trending({"since": "daily"}, base_url + "/python"),
+        await get_github_trending({"since": "weekly"}, base_url + "/python"),
+        await get_github_trending({"since": "monthly"}, base_url + "/python"),
+        await get_github_trending({"since": "daily"}, base_url + "/kotlin"),
+        await get_github_trending({"since": "weekly"}, base_url + "/kotlin"),
+        await get_github_trending({"since": "monthly"}, base_url + "/kotlin"),
+        await get_github_trending({"since": "daily"}, base_url + "/java"),
+        await get_github_trending({"since": "weekly"}, base_url + "/java"),
+        await get_github_trending({"since": "monthly"}, base_url + "/java"),
+        await get_github_trending({"since": "daily"}, base_url + "/dart"),
+        await get_github_trending({"since": "weekly"}, base_url + "/dart"),
+        await get_github_trending({"since": "monthly"}, base_url + "/dart"),
+        await get_github_trending({"since": "daily"}, base_url + "/c++"),
+        await get_github_trending({"since": "weekly"}, base_url + "/c++"),
+        await get_github_trending({"since": "monthly"}, base_url + "/c++"),
+    )
+
     async with aiohttp.ClientSession() as session:
         tasks = []
 

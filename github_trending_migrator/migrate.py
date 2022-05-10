@@ -61,21 +61,28 @@ async def migrate_to_gitea_from_github_trending():
     )
 
     async with aiohttp.ClientSession() as session:
-        tasks = []
+        # tasks = []
 
         for repository in repositories:
             if repository["total_stars"] < 1500 or repository["forks"] < 500:
                 continue
 
-            tasks.append(
-                asyncio.create_task(
-                    migrate_to_gitea(
-                        session,
-                        repository["url"],
-                        repository["repository"],
-                        repository["description"],
-                    )
-                )
+            await migrate_to_gitea(
+                session,
+                repository["url"],
+                repository["repository"],
+                repository["description"],
             )
 
-        await asyncio.wait(tasks)
+        #     tasks.append(
+        #         asyncio.create_task(
+        #             migrate_to_gitea(
+        #                 session,
+        #                 repository["url"],
+        #                 repository["repository"],
+        #                 repository["description"],
+        #             )
+        #         )
+        #     )
+
+        # await asyncio.wait(tasks)

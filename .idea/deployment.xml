@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData" autoUpload="Always" serverName="root@ubuntu-amd64:22 key" remoteFilesAllowedToDisappearOnAutoupload="false">
+  <component name="PublishConfigData" autoUpload="Always" remoteFilesAllowedToDisappearOnAutoupload="false">
     <serverData>
-      <paths name="root@ubuntu-amd64:22 key">
+      <paths name="ubuntu-amd64">
         <serverdata>
           <mappings>
-            <mapping local="$PROJECT_DIR$" web="/" />
+            <mapping deploy="/github-trending-migrator" local="$PROJECT_DIR$" web="/" />
           </mappings>
         </serverdata>
       </paths>

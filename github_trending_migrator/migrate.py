@@ -9,6 +9,7 @@ from itertools import chain
 
 import aiohttp
 
+from .blacklist import repos as repos_blacklist
 from .logger import log
 from .scraping import GITHUB_TRENDING_URL as base_url, get_github_trending
 
@@ -69,6 +70,9 @@ async def migrate_to_gitea_from_github_trending():
                     continue
             except TypeError:
                 log.error(repository)
+                continue
+
+            if repository["url"] in repos_blacklist:
                 continue
 
             try:

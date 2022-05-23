@@ -2,7 +2,7 @@
 Date: 2022.05.09 20:20
 Description: Omit
 LastEditors: Rustle Karl
-LastEditTime: 2022.05.23 23:39:41
+LastEditTime: 2022.05.24 00:07:08
 """
 import asyncio
 from itertools import chain
@@ -18,8 +18,9 @@ async def migrate_to_gitea(session, clone_addr, repo_name, description):
     log.debug(clone_addr)
 
     response = await session.post(
-        url="http://127.0.0.1:13000/api/v1/repos/migrate",
+        # url="http://127.0.0.1:13000/api/v1/repos/migrate",
         # url="http://192.168.0.118:13000/api/v1/repos/migrate",
+        url="http://192.168.0.10:13000/api/v1/repos/migrate",
         auth=aiohttp.BasicAuth("root", "root"),
         json={
             "clone_addr": clone_addr,

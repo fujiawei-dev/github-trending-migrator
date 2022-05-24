@@ -242,7 +242,7 @@ async def get_request(
     **kwargs: Any,
 ) -> Union[str, aiohttp.ClientConnectorError]:
     """Asynchronous GET request with aiohttp."""
-    # kwargs["proxy"] = "http://127.0.0.1:8118"
+    # kwargs["proxy"] = "http://127.0.0.1:7890"
 
     try:
         async with aiohttp.ClientSession() as session:

@@ -2,7 +2,7 @@
 Date: 2022.05.09 20:20
 Description: Omit
 LastEditors: Rustle Karl
-LastEditTime: 2022.05.24 00:07:08
+LastEditTime: 2022.05.24 22:35:19
 """
 import asyncio
 from itertools import chain
@@ -17,11 +17,12 @@ from .scraping import GITHUB_TRENDING_URL as base_url, get_github_trending
 async def migrate_to_gitea(session, clone_addr, repo_name, description):
     log.debug(clone_addr)
 
-    response = await session.post(
+    response: aiohttp.ClientResponse = await session.post(
         # url="http://127.0.0.1:13000/api/v1/repos/migrate",
-        # url="http://192.168.0.118:13000/api/v1/repos/migrate",
+        # url="http://192.168.0.18:13000/api/v1/repos/migrate",
+        # auth=aiohttp.BasicAuth("root", "root"),
         url="http://192.168.0.10:13000/api/v1/repos/migrate",
-        auth=aiohttp.BasicAuth("root", "root"),
+        auth=aiohttp.BasicAuth("root", "123456"),
         json={
             "clone_addr": clone_addr,
             "repo_name": repo_name,
@@ -35,6 +36,7 @@ async def migrate_to_gitea(session, clone_addr, repo_name, description):
     )
 
     log.debug(f"Response [{response.status}]")
+    log.debug(f"Body {await response.json()}")
 
 
 async def migrate_to_gitea_from_github_trending():

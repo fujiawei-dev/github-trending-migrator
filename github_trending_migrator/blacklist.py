@@ -2,7 +2,7 @@
 Date: 2022.05.15 23:25
 Description: Omit
 LastEditors: Rustle Karl
-LastEditTime: 2022.05.24 14:19:05
+LastEditTime: 2022.05.24 21:32:40
 """
 
 repos = set(
@@ -44,5 +44,16 @@ https://github.com/ytisf/theZoo
 https://github.com/Bitwise-01/Instagram-
 https://github.com/tiangolo/full-stack-fastapi-postgresql
 https://github.com/iptv-org/iptv
-""".splitlines()
+https://github.com/tensorflow/models
+https://github.com/coolsnowwolf/lede
+https://github.com/trustwallet/assets
+https://github.com/TrinityCore/TrinityCore
+https://github.com/PojavLauncherTeam/PojavLauncher
+https://github.com/getlantern/lantern
+https://github.com/williamfiset/Algorithms
+https://github.com/github/docs
+https://github.com/dart-lang/sdk
+""".replace(
+        ".git", ""
+    ).splitlines()
 )

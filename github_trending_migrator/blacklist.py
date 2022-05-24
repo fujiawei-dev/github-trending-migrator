@@ -2,7 +2,7 @@
 Date: 2022.05.15 23:25
 Description: Omit
 LastEditors: Rustle Karl
-LastEditTime: 2022.05.23 23:50:05
+LastEditTime: 2022.05.24 14:19:05
 """
 
 repos = set(
@@ -34,5 +34,15 @@ https://github.com/sharkdp/fd
 https://github.com/codecrafters-io/build-your-own-x
 https://github.com/LSPosed/MagiskOnWSA
 https://github.com/NationalSecurityAgency/ghidra
+https://github.com/getzola/zola
+https://github.com/rust-lang/rustfmt
+https://github.com/dani-garcia/vaultwarden
+https://github.com/tokio-rs/tokio
+https://github.com/yewstack/yew
+https://github.com/SergioBenitez/Rocket
+https://github.com/ytisf/theZoo
+https://github.com/Bitwise-01/Instagram-
+https://github.com/tiangolo/full-stack-fastapi-postgresql
+https://github.com/iptv-org/iptv
 """.splitlines()
 )

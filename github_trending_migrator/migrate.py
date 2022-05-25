@@ -2,7 +2,7 @@
 Date: 2022.05.09 20:20
 Description: Omit
 LastEditors: Rustle Karl
-LastEditTime: 2022.05.25 10:10:22
+LastEditTime: 2022.05.25 11:00:26
 """
 import asyncio
 from itertools import chain
@@ -28,10 +28,12 @@ async def get_all_organizations_list(
     organizations = await response.json()
 
     log.debug(f"Response [{response.status}]")
-    log.debug(f"Body {organizations}")
 
     if response.status != 200:
+        log.error(f"Body {organizations}")
         return []
+
+    log.error(f"Organizations {len(organizations)}")
 
     return [organization["username"] for organization in organizations]
 
@@ -42,22 +44,38 @@ async def get_all_repositories_list(
     auth: aiohttp.BasicAuth,
     organization: str,
 ):
-    response: aiohttp.ClientResponse = await session.get(
-        url=base_url + "/api/v1/orgs/" + organization + "/repos",
-        auth=auth,
-    )
+    repositories_list = []
+    page = 1
 
-    repositories = await response.json()
+    while True:
+        response: aiohttp.ClientResponse = await session.get(
+            url=base_url + "/api/v1/orgs/" + organization + "/repos?page=%d" % page,
+            auth=auth,
+        )
 
-    log.debug(f"Response [{response.status}]")
-    log.debug(f"Body {repositories}")
+        repositories = await response.json()
 
-    if response.status != 200:
-        return []
+        log.debug(f"Response [{response.status}]")
 
-    return [
-        repository["original_url"].removesuffix(".git") for repository in repositories
-    ]
+        if response.status != 200:
+            log.error(f"Body {repositories}")
+            continue
+
+        if len(repositories) == 0:
+            break
+
+        log.info(f"{organization} {len(repositories)}")
+
+        repositories_list.extend(
+            [
+                repository["original_url"].removesuffix(".git")
+                for repository in repositories
+            ]
+        )
+
+        page += 1
+
+    return repositories_list
 
 
 async def migrate_to_gitea(
@@ -97,13 +115,11 @@ async def get_repos_blacklist():
         for base_url, auth in zip(base_urls, auths):
             organizations = await get_all_organizations_list(session, base_url, auth)
             for organization in organizations:
-                repos_blacklist.add(
+                repos_blacklist.update(
                     await get_all_repositories_list(
                         session, base_url, auth, organization
                     )
                 )
-
-    return repos_blacklist
 
 
 async def migrate_to_gitea_from_github_trending():

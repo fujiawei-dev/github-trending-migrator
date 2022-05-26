@@ -2,7 +2,7 @@
 Date: 2022.05.09 20:20
 Description: Omit
 LastEditors: Rustle Karl
-LastEditTime: 2022.05.25 11:00:26
+LastEditTime: 2022.05.26 08:05:06
 """
 import asyncio
 from itertools import chain
@@ -150,6 +150,8 @@ async def migrate_to_gitea_from_github_trending():
                     repository["url"],
                     repository["repository"],
                     repository["description"],
+                    "http://192.168.0.10:13000",
+                    aiohttp.BasicAuth("root", "123456"),
                 )
             except asyncio.exceptions.TimeoutError:
                 continue

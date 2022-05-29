@@ -2,7 +2,7 @@
 Date: 2022.05.09 20:20
 Description: Omit
 LastEditors: Rustle Karl
-LastEditTime: 2022.05.26 08:05:06
+LastEditTime: 2022.05.29 09:45:17
 """
 import asyncio
 from itertools import chain
@@ -129,7 +129,7 @@ async def migrate_to_gitea_from_github_trending():
         await get_github_trending({"since": "daily"}),
         await get_github_trending({"since": "daily"}, GITHUB_TRENDING_URL + "/go"),
         await get_github_trending({"since": "daily"}, GITHUB_TRENDING_URL + "/python"),
-        await get_github_trending({"since": "daily"}, GITHUB_TRENDING_URL + "/rust"),
+        # await get_github_trending({"since": "daily"}, GITHUB_TRENDING_URL + "/rust"),
     )
 
     async with aiohttp.ClientSession() as session:

@@ -2,7 +2,7 @@
 Date: 2022.05.09 20:20
 Description: Omit
 LastEditors: Rustle Karl
-LastEditTime: 2022.05.29 09:45:17
+LastEditTime: 2022.05.29 17:13:31
 """
 import asyncio
 from itertools import chain
@@ -85,7 +85,7 @@ async def migrate_to_gitea(
     description: str,
     base_url: str,
     auth: aiohttp.BasicAuth,
-) -> List[str]:
+) -> bool:
     log.debug("Origin " + clone_addr)
 
     response: aiohttp.ClientResponse = await session.post(
@@ -103,8 +103,12 @@ async def migrate_to_gitea(
         },
     )
 
+    response_body = await response.json()
+
     log.debug(f"Response [{response.status}]")
-    log.debug(f"Body {await response.json()}")
+    log.debug(f"Body {response_body}")
+
+    return response.status == 200 or response.status == 201 or response.status == 409
 
 
 async def get_repos_blacklist():
@@ -120,6 +124,64 @@ async def get_repos_blacklist():
                         session, base_url, auth, organization
                     )
                 )
+
+
+async def migrate_to_gitea_from_gitea():
+    async with aiohttp.ClientSession() as session:
+        page = 1
+
+        while True:
+            response: aiohttp.ClientResponse = await session.get(
+                url="http://192.168.0.18:13000"
+                + "/api/v1/orgs/mirror/repos?page=%d" % page,
+                auth=aiohttp.BasicAuth("root", "root"),
+            )
+
+            repositories = await response.json()
+
+            log.debug(f"Response [{response.status}]")
+
+            if response.status != 200:
+                log.error(f"Body {repositories}")
+                continue
+
+            if len(repositories) == 0:
+                break
+
+            for repository in repositories:
+                if await migrate_to_gitea(
+                    session,
+                    repository["clone_url"],
+                    repository["name"],
+                    repository["description"],
+                    "http://192.168.0.10:13000",
+                    aiohttp.BasicAuth("root", "123456"),
+                ):
+                    response: aiohttp.ClientResponse = await session.patch(
+                        url="http://192.168.0.10:13000"
+                        + "/api/v1/repos/mirror/"
+                        + repository["name"],
+                        auth=aiohttp.BasicAuth("root", "123456"),
+                        json={"website": repository["original_url"]},
+                    )
+
+                    log.debug("Patch")
+                    response_body = await response.json()
+                    log.debug(f"Response [{response.status}]")
+                    log.debug(f"Body {response_body}")
+
+                    response: aiohttp.ClientResponse = await session.delete(
+                        url="http://192.168.0.18:13000"
+                        + "/api/v1/repos/mirror/"
+                        + repository["name"],
+                        auth=aiohttp.BasicAuth("root", "root"),
+                    )
+
+                    log.debug("Delete")
+                    log.debug(f"Response [{response.status}]")
+                    assert response.status == 204
+
+            page += 1
 
 
 async def migrate_to_gitea_from_github_trending():

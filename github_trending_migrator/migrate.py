@@ -2,7 +2,7 @@
 Date: 2022.05.09 20:20
 Description: Omit
 LastEditors: Rustle Karl
-LastEditTime: 2022.05.29 17:13:31
+LastEditTime: 2022.05.31 08:20:38
 """
 import asyncio
 from itertools import chain
@@ -88,27 +88,31 @@ async def migrate_to_gitea(
 ) -> bool:
     log.debug("Origin " + clone_addr)
 
-    response: aiohttp.ClientResponse = await session.post(
-        url=base_url + "/api/v1/repos/migrate",
-        auth=auth,
-        json={
-            "clone_addr": clone_addr,
-            "repo_name": repo_name,
-            "description": description,
-            "mirror": True,
-            "private": False,
-            "repo_owner": "mirror",
-            "service": "git",
-            "labels": True,
-        },
-    )
-
-    response_body = await response.json()
-
-    log.debug(f"Response [{response.status}]")
-    log.debug(f"Body {response_body}")
-
-    return response.status == 200 or response.status == 201 or response.status == 409
+    # 处理超时
+    try:
+        response: aiohttp.ClientResponse = await session.post(
+            url=base_url + "/api/v1/repos/migrate",
+            auth=auth,
+            json={
+                "clone_addr": clone_addr,
+                "repo_name": repo_name,
+                "description": description,
+                "mirror": True,
+                "private": False,
+                "repo_owner": "mirror",
+                "service": "git",
+                "labels": True,
+            },
+        )
+    except (aiohttp.ClientError, asyncio.exceptions.TimeoutError):
+        return False
+    else:
+        response_body = await response.json()
+        log.debug(f"Response [{response.status}]")
+        log.debug(f"Body {response_body}")
+        return (
+            response.status == 200 or response.status == 201 or response.status == 409
+        )
 
 
 async def get_repos_blacklist():
